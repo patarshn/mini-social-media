@@ -9,6 +9,8 @@ export default function Profile({ initialData }) {
     const router = useRouter();
     const [isFollow, setIsFollow] = useState(initialData.is_follow);
     const [followerCount, setFollowerCount] = useState(initialData.follower);
+    const [storyContent, setStoryContent] = useState('');
+    const [postError, setPostError] = useState(null);
     
     useEffect(() => {
         // Any additional side effects or data fetching can go here
@@ -45,6 +47,37 @@ export default function Profile({ initialData }) {
                 console.error('Failed to follow/unfollow');
             }
         } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+
+    async function onPostStory() {
+        const token = Cookies.get('jwt');
+        if (!token) {
+            router.push('/login');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/stories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ content: storyContent })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setStoryContent(''); // Clear the input field
+                // Optionally, refresh the list of stories or add the new story to the state
+                console.log("Story posted successfully:", data);
+            } else {
+                setPostError('Failed to post story');
+            }
+        } catch (error) {
+            setPostError('An error occurred while posting the story');
             console.error('An error occurred:', error);
         }
     }
@@ -90,6 +123,26 @@ export default function Profile({ initialData }) {
                             }
                         </div>
                         
+                        {/* Post Story Section */}
+                        {initialData.is_same_user && (
+                            <div className="mx-4 my-2 flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="What's on your mind?"
+                                    value={storyContent}
+                                    onChange={(e) => setStoryContent(e.target.value)}
+                                    className="flex-grow p-2 border border-gray-300 rounded-lg mr-2"
+                                />
+                                <button
+                                    onClick={onPostStory}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                >
+                                    Post
+                                </button>
+                            </div>
+                        )}
+                        {postError && <p className="text-red-500 text-center mt-2">{postError}</p>}
+                        
                         <div className="border border-zinc-900 shadow-md shadow-zinc-900 rounded-lg bg-zinc-900 p-4 m-4">
                             <StoryList initialData={initialData}></StoryList>
                         </div>
@@ -114,7 +167,7 @@ export async function getServerSideProps(context) {
     }
 
     try {
-        const res = await fetch(`http://localhost:3000/api/profile/${username}`, {
+        const res = await fetch(`${process.env.WEB_URL}/api/profile/${username}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

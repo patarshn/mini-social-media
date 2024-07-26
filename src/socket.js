@@ -4,7 +4,7 @@ let socket;
 
 export function getSocket() {
   if (!socket) {
-    socket = io('http://localhost:3000'); // Your server URL
+    socket = io(process.env.WEB_URL); // Your server URL
   }
   return socket;
 }
