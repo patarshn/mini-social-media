@@ -21,6 +21,11 @@ export default async function handler(req, res) {
                 const isMatch = await bcrypt.compare(password, user.password);
 
                 if (!isMatch) return responseWrapper({res, status: 401, message: `${prefix}: Invalid Credentials - 002`, error: false})
+                const userData = {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email 
+                }
                 const token = jwt.sign({
                     data : {
                         id: user._id,
@@ -30,7 +35,8 @@ export default async function handler(req, res) {
                 }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
                 const data = {
-                    jwt: token
+                    jwt: token,
+                    ...userData
                 }
                 return responseWrapper({res, status: 200, message: `${prefix}: Success Login`, error: false, data})
             } catch (error) {

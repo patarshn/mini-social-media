@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         case 'POST':
             await dbConnect();
             
-            try {
+            try {  
                 const { username, email, password } = req.body;
                 const hashedPassword = await bcrypt.hash(password, 10);
 

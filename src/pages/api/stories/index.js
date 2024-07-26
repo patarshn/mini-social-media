@@ -24,6 +24,8 @@ export default async function handler(req, res) {
                 
                 await story.save()
                 const data = story
+                
+                global.io.emit('new-story', data);
 
                 return responseWrapper({res, status: 200, message: `${prefix}: Success Add Story`, error: false, data})
             } catch (error) {

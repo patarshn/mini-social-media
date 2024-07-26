@@ -1,4 +1,8 @@
-function responseWrapper({res, status, error, message, data}){
+function responseWrapper({res, status, error, message, data, error_detail}){
+    if(error_detail){
+        console.log(error_detail.stack)
+    }
+
     let resBody = { error: error , message: message}
     if (data) resBody.data = data
     console.log("responseWrapper: ",resBody)
