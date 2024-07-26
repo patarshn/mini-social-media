@@ -3,12 +3,12 @@ import FollowerFollowingItem from '@/components/profile/FollowerFollowingItem';
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
 
-
 const FollowerFollowingList = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { username } = router.query;
+
   useEffect(() => {
     if (!username) return; 
 
@@ -16,15 +16,21 @@ const FollowerFollowingList = () => {
       try {
         const token = Cookies.get('jwt');
         if (!token) {
-          // If no token, redirect to login
           router.push('/login');
           return;
         }
+
         const response = await fetch(`/api/follower/${username}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+
+        if (!response.ok) {
+          console.error('Failed to fetch data:', response.statusText);
+          return;
+        }
+
         const data = await response.json();
         if (data.error) {
           console.error(data.message);
@@ -37,6 +43,7 @@ const FollowerFollowingList = () => {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [username]);
 
@@ -45,7 +52,7 @@ const FollowerFollowingList = () => {
   }
 
   if (list.length === 0) {
-    return <p>No follower found.</p>;
+    return <p>No Following found.</p>;
   }
 
   return (

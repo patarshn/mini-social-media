@@ -7,7 +7,7 @@ const hostname = "localhost";
 const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
-
+let users = {}
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
     handler(req, res);
@@ -28,12 +28,27 @@ app.prepare().then(() => {
   }
 
   io.on("connection", (socket) => {
-    console.log("A user connected");
+    console.log("A user connected", users);
 
-    socket.on("trySocket", (msg) => {
-      console.log("Message received:", msg);
-      // io.emit("trySocket", `Server response: ${msg}`); // Emit to all clients
+    socket.on("register", function (userId) {
+      console.log("socket userRegister", userId, socket.id)
+      if (userId){
+        users[userId] = socket.id;
+      }
     });
+
+    socket.on("new-story-following", function (data){
+      console.log("new-story-following event:", data.data, data.followers)
+      console.log("users:",users)
+      let followers = data.followers
+      followers.forEach(followerId => {
+        console.log("new-story", followerId)
+          if (users[followerId]) {
+            console.log("new-story-id:", users[followerId])
+            io.to(users[followerId]).emit('new-story', data.data);
+          }
+      });
+    })
 
     socket.on("disconnect", () => {
       console.log("User disconnected");

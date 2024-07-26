@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    .bgFav {
+        @apply bg-gradient-to-r from-pink-500 to-yellow-500 
+    }
+
+    .bgFav:hover{
+        @apply bg-gradient-to-r from-green-500 to-sky-500
+    }
+
+}

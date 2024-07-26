@@ -1,10 +1,60 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-const inter = Inter({ subsets: ["latin"] });
+const Home = () => {
+  const router = useRouter();
 
-export default function Home() {
-  return (
-    <>Index</>
-  );
+  useEffect(() => {
+    // Client-side redirecting if needed (optional)
+    // This can be used if you want additional checks on the client side
+  }, []);
+
+  return null; // Empty component as the redirection is handled on the server side
+};
+
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const token = req.cookies.jwt || null;
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  try {
+    const response = await fetch(`${process.env.API_URL}/api/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch profile');
+    }
+
+    const data = await response.json();
+
+    return {
+      redirect: {
+        destination: `/profile/${data.data.username}`,
+        permanent: false,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+
+    // Redirect to login if there is an error fetching the profile
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 }
+
+export default Home;

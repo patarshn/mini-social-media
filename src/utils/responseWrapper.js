@@ -5,7 +5,7 @@ function responseWrapper({res, status, error, message, data, error_detail}){
 
     let resBody = { error: error , message: message}
     if (data) resBody.data = data
-    console.log("responseWrapper: ",resBody)
+    // console.log("responseWrapper: ",resBody)
     return res.status(status).json(resBody);
 }
 

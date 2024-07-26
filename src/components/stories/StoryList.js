@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import StoryItem from './StoryItem'; // Make sure to adjust the import path if needed
 import { getSocket } from '@/socket';
+import Cookies from 'js-cookie';
 
-const StoryList = () => {
+const StoryList = ({initialData}) => {
     const [isConnected, setIsConnected] = useState(false);
     const [transport, setTransport] = useState("N/A");
     const socket = getSocket();
@@ -14,15 +15,30 @@ const StoryList = () => {
     useEffect(() => {
         const fetchStories = async () => {
             try {
-                const response = await fetch('/api/stories/following', {
+                const token = Cookies.get('jwt');
+                const urlByFollowing = "/api/stories/following"
+                let url = `/api/stories/${initialData.username}`; //default by username
+                if (initialData.is_same_user){
+                    url = urlByFollowing 
+                }
+                
+                console.log("fetchStory Using:", url, initialData)
+                const response = await fetch(url, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('jwt')}` // Or use any other method to get the token
+                        Authorization: `Bearer ${token}` // Or use any other method to get the token
                     }
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    const storiesFromAPI = data.data.flatMap(user => user.stories); // Flatten stories from each user
+                    let storiesFromAPI = {}
+                    if(initialData.is_same_user){
+                        storiesFromAPI = data.data.flatMap(user => user.stories);
+                    }else{
+                        storiesFromAPI = data.data
+                    }
+                    
+                    console.log(storiesFromAPI)
                     setStories(storiesFromAPI);
                 } else {
                     console.error('Failed to fetch stories');
@@ -60,7 +76,12 @@ const StoryList = () => {
 
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
+        const userId = localStorage.getItem('id')
+        console.log(userId);
+        socket.emit("register", userId)
+
         socket.on('new-story', onNewStory);
+
 
         // Cleanup on unmount
         return () => {

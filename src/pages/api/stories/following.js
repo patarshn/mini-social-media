@@ -24,7 +24,7 @@ export default async function handler(req, res) {
                 }
                 const followingUsername = user.following.map(followingUser => followingUser.username);
 
-                const stories = await Story.find({ username: { $in: followingUsername } });
+                const stories = await Story.find({ username: { $in: followingUsername } }).sort({ createdAt: -1 });
                 
                 const groupedStories = user.following.map(followingUser => {
                     return {

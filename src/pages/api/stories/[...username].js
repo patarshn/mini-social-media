@@ -17,7 +17,7 @@ export default async function handler(req, res) {
             
             try {
                 const searchUsername = req.query.username;
-                const stories = await Story.find({username: searchUsername})
+                const stories = await Story.find({username: searchUsername}).sort({ createdAt: -1 });
                 if (!stories) return responseWrapper({res, status: 500, message: `${prefix}: Error database`, error: false})
                 
                 const data = stories

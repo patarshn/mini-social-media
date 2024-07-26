@@ -32,13 +32,14 @@ export default function Login() {
 
             if (response.ok) {
                 const data = await response.json();
-                const { jwt, username } = data.data;
+                const { jwt, username, id } = data.data;
 
                 // Store JWT in cookies
                 Cookies.set('jwt', jwt, { expires: 7 }); // JWT expires in 7 days
 
                 // Store username in localStorage
                 localStorage.setItem('username', username);
+                localStorage.setItem('id', id);
 
                 // Redirect to the profile page
                 router.push(`/profile/${username}`);

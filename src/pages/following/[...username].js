@@ -10,26 +10,31 @@ const FollowerFollowingList = () => {
   const { username } = router.query;
 
   useEffect(() => {
-    
-  console.log("username:")
+    if (!username) return; 
+
     const fetchData = async () => {
       try {
         const token = Cookies.get('jwt');
         if (!token) {
-          // If no token, redirect to login
           router.push('/login');
           return;
         }
+
         const response = await fetch(`/api/following/${username}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+
+        if (!response.ok) {
+          console.error('Failed to fetch data:', response.statusText);
+          return;
+        }
+
         const data = await response.json();
         if (data.error) {
           console.error(data.message);
         } else {
-          console.log(data.data)
           setList(data.data);
         }
       } catch (error) {
@@ -38,8 +43,9 @@ const FollowerFollowingList = () => {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, []);
+  }, [username]);
 
   if (loading) {
     return <p>Loading...</p>;
