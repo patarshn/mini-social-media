@@ -27,6 +27,10 @@ export default async function handler(req, res) {
                 const data = story
 
                 const user = await User.findById(req.auth.id).select('followers').exec();
+                user.followers.unshift({
+                    _id: user._id,
+                    username: user.username,
+                })
                 console.log(user)
 
                 // user.followers.forEach(follower => {

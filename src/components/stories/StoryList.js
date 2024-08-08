@@ -3,8 +3,9 @@ import io from 'socket.io-client';
 import StoryItem from './StoryItem'; // Make sure to adjust the import path if needed
 import { getSocket } from '@/socket';
 import Cookies from 'js-cookie';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const StoryList = ({initialData}) => {
+const StoryList = ({ initialData }) => {
     const [isConnected, setIsConnected] = useState(false);
     const [transport, setTransport] = useState("N/A");
     const socket = getSocket();
@@ -18,10 +19,10 @@ const StoryList = ({initialData}) => {
                 const token = Cookies.get('jwt');
                 const urlByFollowing = "/api/stories/following"
                 let url = `/api/stories/${initialData.username}`; //default by username
-                if (initialData.is_same_user){
-                    url = urlByFollowing 
+                if (initialData.is_same_user) {
+                    url = urlByFollowing
                 }
-                
+
                 console.log("fetchStory Using:", url, initialData)
                 const response = await fetch(url, {
                     headers: {
@@ -32,12 +33,12 @@ const StoryList = ({initialData}) => {
                 if (response.ok) {
                     const data = await response.json();
                     let storiesFromAPI = {}
-                    if(initialData.is_same_user){
+                    if (initialData.is_same_user) {
                         storiesFromAPI = data.data.flatMap(user => user.stories);
-                    }else{
+                    } else {
                         storiesFromAPI = data.data
                     }
-                    
+
                     console.log(storiesFromAPI)
                     setStories(storiesFromAPI);
                 } else {
@@ -97,14 +98,27 @@ const StoryList = ({initialData}) => {
 
     return (
         <div className="story-list">
-            {stories.map((story) => (
-                <StoryItem
-                    key={story._id}
-                    imgProfile={story.img_profile}
-                    username={story.username}
-                    content={story.content}
-                />
-            ))}
+            <AnimatePresence>
+                {stories.map((story) => (
+                    <motion.div
+                        key={story._id}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-1"
+                    >
+                        <StoryItem
+                            key={story._id}
+                            imgProfile={story.img_profile}
+                            username={story.username}
+                            content={story.content}
+                        />
+
+                    </motion.div>
+                ))}
+
+            </AnimatePresence>
         </div>
     );
 };

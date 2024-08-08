@@ -102,7 +102,7 @@ export default function Profile({ initialData }) {
                             </div>
                         </div>
                         <p className="text-center my-2 font-bold">{initialData.username}</p>
-                        <div className="border border-zinc-900 shadow-md shadow-zinc-900 rounded-lg bg-zinc-900 p-4 m-4">
+                        <div className="border border-zinc-900 shadow-md shadow-zinc-900 rounded-lg bg-zinc-900 p-4 m-4 rounded-tl-3xl rounded-br-3xl">
                             <div className="flex w-full flex-row">
                                 <div className="flex flex-col items-center justify-center w-1/2">
                                     <span className="mx-auto text-xl">Follower</span>
@@ -131,11 +131,11 @@ export default function Profile({ initialData }) {
                                     placeholder="What's on your mind?"
                                     value={storyContent}
                                     onChange={(e) => setStoryContent(e.target.value)}
-                                    className="flex-grow p-2 border border-gray-300 rounded-lg mr-2"
+                                    className="flex-grow p-2 border border-gray-300 rounded-l-full mr-2"
                                 />
                                 <button
                                     onClick={onPostStory}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-r-full"
                                 >
                                     Post
                                 </button>
@@ -143,7 +143,7 @@ export default function Profile({ initialData }) {
                         )}
                         {postError && <p className="text-red-500 text-center mt-2">{postError}</p>}
                         
-                        <div className="border border-zinc-900 shadow-md shadow-zinc-900 rounded-lg bg-zinc-900 p-4 m-4">
+                        <div className="border border-zinc-900 shadow-md shadow-zinc-900 rounded-lg bg-zinc-900 p-4 m-4 rounded-tl-3xl rounded-br-3xl">
                             <StoryList initialData={initialData}></StoryList>
                         </div>
                     </div>

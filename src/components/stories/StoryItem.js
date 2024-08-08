@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const StoryItem = ({ imgProfile, username, content }) => {
     return (
-        <div className="story-item border p-4 mb-4 rounded-lg bg-gray-800">
+        <div className="story-item border p-4 mb-4 rounded-br-3xl rounded-tl-3xl  rounded-lg bg-gray-800">
             <div className="flex items-center">
                 <img
                     src={'/profile.webp'}

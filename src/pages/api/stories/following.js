@@ -18,6 +18,10 @@ export default async function handler(req, res) {
             try {
                 const userId = req.auth.id;
                 const user = await User.findById(userId).populate('following', '_id username');
+                user.following.unshift({
+                    _id: user._id,
+                    username: user.username,
+                })
                 
                 if (user.length > 0){
                     return responseWrapper({res, status: 200, message: `${prefix}: Success Get Stories`, error: false, data : []})
@@ -34,7 +38,7 @@ export default async function handler(req, res) {
                       stories: stories.filter(story => story.username === followingUser.username)
                     };
                   });
-
+                
                 const data = groupedStories;  
                 return responseWrapper({res, status: 200, message: `${prefix}: Success Get Stories`, error: false, data})
             } catch (error) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FollowerFollowingItem from '@/components/profile/FollowerFollowingItem';
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
+import Navbar from '@/components/navbar';
 
 const FollowerFollowingList = () => {
   const [list, setList] = useState([]);
@@ -51,15 +52,20 @@ const FollowerFollowingList = () => {
     return <p>Loading...</p>;
   }
 
-  if (list.length === 0) {
-    return <p>No Following found.</p>;
-  }
+  // if (list.length === 0) {
+  //   return <p>No Following found.</p>;
+  // }
 
   return (
     <div>
-      {list.map((item) => (
-        <FollowerFollowingItem key={item._id} item={item} />
-      ))}
+      <Navbar />
+      <div className='m-4'>
+        {list.length === 0 ? 
+        <p>No follower found.</p>
+        : list.map((item) => (
+          <FollowerFollowingItem key={item._id} item={item} />
+        ))}
+      </div>
     </div>
   );
 };
